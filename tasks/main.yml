@@ -10,3 +10,6 @@
   notify: Upload config
   ansible.builtin.include_tasks: config.yml
   with_items: "{{ opnsense_interfaces }}"
+
+- name: Flush Handlers
+  ansible.builtin.meta: flush_handlers
