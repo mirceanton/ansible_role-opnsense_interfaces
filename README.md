@@ -1,35 +1,64 @@
-Role Name
-=========
+OPNsense: Interfaces
+====================
 
-A brief description of the role goes here.
+An Ansible role that configures the interfaces on an opnSense firewall.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+This role requires the `lxml` python package to be installed on the host system.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+|              Variable               |     Type     |                                                                       Description                                                                        |
+| :---------------------------------: | :----------: | :------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|         opnsense_interfaces         | list(object) |                                             List of configuration settings for each interface individually.                                              |
+|     opnsense_interfaces[].name      |    string    |                                                           The name for the network interface.                                                            |
+|  opnsense_interfaces[].description  |    string    |                                           A short description for clarification, if the name does not suffice.                                           |
+|     opnsense_interfaces[].iface     |    string    |                                                The name of the actual physical interface this is tied to.                                                |
+|    opnsense_interfaces[].enabled    |    string    |                                        Disable the interface without needing to remove its assignment altogether.                                        |
+|     opnsense_interfaces[].lock      |    string    |                                                 Whether or not to lock the settings for this interface.                                                  |
+|    opnsense_interfaces[].address    |    string    |                                                         The address to assign to this interface.                                                         |
+|    opnsense_interfaces[].subnet     |    string    |                                                                    The subnet length.                                                                    |
+|    opnsense_interfaces[].gateway    |    string    |                                                             The gateway for this interface.                                                              |
+| opnsense_interfaces[].block_private |    string    |              Block traffic claiming to come from private addresses. On WAN interfaces, this kind of traffic should not happen legitimately.              |
+|  opnsense_interfaces[].block_bogon  |    string    | Block traffic claiming to come from invalid or reserved addresses (Martian packets). Note that this also includes multicast traffic using OSPF and RTMP. |
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+N/A.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
 ```yaml
-- hosts: all
+- name: Configure the interfaces on all firewalls
+  hosts: opnsense
 
   roles:
-    - role: mirceanton.template
+    - role: mirceanton.opnsense_interfaces
       vars:
-        foo: bar
+        opnsense_interfaces:
+          - name: wan
+            description: WAN
+            iface: vtnet1
+            enabled: true
+            lock: true
+            address: "192.168.10.90"
+            subnet: "24"
+            gateway: WAN_GW
+            block_private: false
+            block_bogon: false
+
+          - name: lan
+            description: LAN
+            iface: vtnet0
+            enabled: true
+            lock: true
+            address: "192.168.69.1"
+            subnet: "24"
 ```
 
 License
