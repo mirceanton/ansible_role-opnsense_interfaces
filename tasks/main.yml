@@ -5,7 +5,7 @@
     src: "{{ config_file }}"
     dest: "{{ local_file }}"
     flat: true
-  
+
 - name: Get config file stats
   delegate_to: localhost
   ansible.builtin.stat:
