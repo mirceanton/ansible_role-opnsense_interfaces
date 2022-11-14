@@ -1,5 +1,6 @@
 ---
 skip_list:
+  - name[template]
   - experimental
   - yaml[line-length]
   - command-instead-of-module

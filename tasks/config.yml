@@ -1,0 +1,70 @@
+---
+- name: Local tasks
+  delegate_to: localhost
+  block:
+    - name: "[{{ item.name | upper }}] Set interface"
+      community.general.xml:
+        pretty_print: true
+        path: "{{ local_file }}"
+        xpath: "{{ xpath }}/{{ item.name }}/if"
+        value: "{{ item.iface }}"
+
+    - name: "[{{ item.name | upper }}] Set description"
+      community.general.xml:
+        pretty_print: true
+        path: "{{ local_file }}"
+        xpath: "{{ xpath }}/{{ item.name }}/descr"
+        value: "{{ item.description }}"
+      when: item.description is defined
+
+    - name: "[{{ item.name | upper }}] Set enabled status"
+      community.general.xml:
+        pretty_print: true
+        path: "{{ local_file }}"
+        xpath: "{{ xpath }}/{{ item.name }}/enable"
+        value: "{{ '1' if item.enabled | default(true) else '0' }}"
+
+    - name: "[{{ item.name | upper }}] Set lock status"
+      community.general.xml:
+        pretty_print: true
+        path: "{{ local_file }}"
+        xpath: "{{ xpath }}/{{ item.name }}/lock"
+        value: "{{ '1' if item.lock | default(false) else '0' }}"
+
+    - name: "[{{ item.name | upper }}] Set IP address"
+      community.general.xml:
+        pretty_print: true
+        path: "{{ local_file }}"
+        xpath: "{{ xpath }}/{{ item.name }}/ipaddr"
+        value: "{{ item.address }}"
+
+    - name: "[{{ item.name | upper }}] Set subnet"
+      community.general.xml:
+        pretty_print: true
+        path: "{{ local_file }}"
+        xpath: "{{ xpath }}/{{ item.name }}/subnet"
+        value: "{{ item.subnet }}"
+
+    - name: "[{{ item.name | upper }}] Block private networks"
+      when: item.block_private is defined
+      community.general.xml:
+        pretty_print: true
+        path: "{{ local_file }}"
+        xpath: "{{ xpath }}/{{ item.name }}/blockpriv"
+        state: "{{ 'present' if item.block_private else 'absent' }}"
+
+    - name: "[{{ item.name | upper }}] Block bogon networks"
+      when: item.block_bogon is defined
+      community.general.xml:
+        pretty_print: true
+        path: "{{ local_file }}"
+        xpath: "{{ xpath }}/{{ item.name }}/blockbogons"
+        state: "{{ 'present' if item.block_bogon else 'absent' }}"
+
+    - name: "[{{ item.name | upper }}] Set default gateway"
+      when: item.gateway is defined
+      community.general.xml:
+        pretty_print: true
+        path: "{{ local_file }}"
+        xpath: "{{ xpath }}/{{ item.name }}/gateway"
+        value: "{{ item.gateway }}"
